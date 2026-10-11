@@ -1,5 +1,6 @@
 import { getAllIdeas, getAllItems, putItems, putProfile, replaceIdeas } from "./db";
 import { refreshItems } from "./useItems";
+import { refreshProfile } from "./useProfile";
 import type { Analysis, Idea, Item, Profile } from "./types";
 
 const BATCH = 10;
@@ -71,5 +72,6 @@ export async function generateProfile(): Promise<Profile> {
       status: previous.get(idea.title.toLowerCase())?.status ?? "nueva",
     })),
   );
+  await refreshProfile();
   return profile;
 }
