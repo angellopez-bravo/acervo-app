@@ -1,5 +1,6 @@
 import { getAllIdeas, getAllItems, putItems, putProfile, replaceIdeas } from "./db";
 import { refreshItems } from "./useItems";
+import { refreshIdeas } from "./useIdeas";
 import { refreshProfile } from "./useProfile";
 import type { Analysis, Idea, Item, Profile } from "./types";
 
@@ -63,15 +64,21 @@ export async function generateProfile(): Promise<Profile> {
   const profile: Profile = { clusters: result.clusters, highlights: result.highlights, generatedAt: Date.now() };
   await putProfile(profile);
 
-  // Si una idea ya existía, conserva lo que decidiste sobre ella.
-  const previous = new Map((await getAllIdeas()).map((i) => [i.title.toLowerCase(), i]));
-  await replaceIdeas(
-    result.ideas.map((idea) => ({
-      ...idea,
-      id: previous.get(idea.title.toLowerCase())?.id ?? crypto.randomUUID(),
-      status: previous.get(idea.title.toLowerCase())?.status ?? "nueva",
-    })),
-  );
+  // Lo que decidiste sobre una idea se conserva, y las que marcaste como interesantes no se pierden.
+  const old = await getAllIdeas();
+  const previous = new Map(old.map((i) => [i.title.toLowerCase(), i]));
+  const fresh: Idea[] = result.ideas.map((idea, order) => ({
+    ...idea,
+    order,
+    id: previous.get(idea.title.toLowerCase())?.id ?? crypto.randomUUID(),
+    status: previous.get(idea.title.toLowerCase())?.status ?? "nueva",
+  }));
+  const titles = new Set(fresh.map((i) => i.title.toLowerCase()));
+  const kept = old
+    .filter((i) => i.status === "interesa" && !titles.has(i.title.toLowerCase()))
+    .map((i, n) => ({ ...i, order: fresh.length + n }));
+  await replaceIdeas([...fresh, ...kept]);
+  await refreshIdeas();
   await refreshProfile();
   return profile;
 }

@@ -41,4 +41,5 @@ export type Idea = {
   why: string;
   clusterIds: string[];
   status: "nueva" | "interesa" | "descartada";
+  order: number;
 };
