@@ -6,6 +6,10 @@ import type { Item } from "./types";
 
 let snapshot: Item[] | null = null;
 let loading = false;
+let loadedAt = 0;
+
+/** Instante de la última lectura local; sirve de "ahora" estable para filtrar por fecha. */
+export const getLoadedAt = () => loadedAt;
 const listeners = new Set<() => void>();
 
 export async function refreshItems() {
@@ -13,6 +17,7 @@ export async function refreshItems() {
   loading = true;
   try {
     snapshot = await getAllItems();
+    loadedAt = Date.now();
   } catch {
     snapshot = [];
   } finally {
