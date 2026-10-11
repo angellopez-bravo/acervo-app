@@ -14,6 +14,9 @@ export type Item = {
   source: SourceApp;
   savedAt: number;
   thumbnail?: string;
+  author?: string;
+  /** Se rellena cuando la consulta de vista previa tuvo respuesta definitiva (con datos o sin ellos). */
+  previewAt?: number;
   analysis?: Analysis;
 };
 
