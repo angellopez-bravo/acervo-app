@@ -1,6 +1,7 @@
 "use client";
 
 import ItemCard from "./ItemCard";
+import SeedButton from "./SeedButton";
 import { useItems } from "@/lib/useItems";
 
 export default function RecentItems() {
@@ -13,6 +14,9 @@ export default function RecentItems() {
       <div className="empty">
         <p>Todavía no hay nada guardado.</p>
         <p>Desde Instagram, TikTok, X o YouTube, elige Compartir y después Acervo.</p>
+        <div style={{ marginTop: 24 }}>
+          <SeedButton />
+        </div>
       </div>
     );
   }
