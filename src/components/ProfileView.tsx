@@ -3,7 +3,8 @@
 import { useMemo, useState } from "react";
 import ItemCard from "./ItemCard";
 import SeedButton from "./SeedButton";
-import { generateProfile } from "@/lib/analysis";
+import AccessForm from "./AccessForm";
+import { AccessError, generateProfile } from "@/lib/analysis";
 import { useItems } from "@/lib/useItems";
 import { useProfile } from "@/lib/useProfile";
 import type { Cluster, Item } from "@/lib/types";
@@ -21,6 +22,7 @@ export default function ProfileView() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [needsCode, setNeedsCode] = useState(false);
 
   const clusters = useMemo(
     () => [...(profile?.clusters ?? [])].sort((a, b) => b.weight - a.weight),
@@ -37,7 +39,12 @@ export default function ProfileView() {
     try {
       await generateProfile();
       setSelectedId(null);
+      setNeedsCode(false);
     } catch (e) {
+      if (e instanceof AccessError) {
+        setNeedsCode(true);
+        return;
+      }
       setError(e instanceof Error ? e.message : "No se pudo generar el perfil.");
     } finally {
       setBusy(false);
@@ -86,6 +93,7 @@ export default function ProfileView() {
           {busy ? "Generando perfil" : profile ? "Actualizar perfil" : "Generar perfil"}
         </button>
         {busy && <p className="meta">Esto puede tardar unos segundos.</p>}
+        {needsCode && !busy && <AccessForm onDone={generate} />}
         {error && <p className="error" role="alert">{error}</p>}
       </div>
 

@@ -18,8 +18,20 @@ async function post<T>(path: string, body: unknown): Promise<T> {
     throw new Error("No hay conexión con el servidor.");
   }
   const data = await res.json().catch(() => ({}));
+  if (res.status === 401) throw new AccessError(data.error);
   if (!res.ok) throw new Error(data.error ?? "No se pudo completar la solicitud.");
   return data as T;
+}
+
+/** El servidor exige el código de acceso: hay que pedirlo y reintentar. */
+export class AccessError extends Error {
+  constructor(message = "Hace falta el código de acceso.") {
+    super(message);
+  }
+}
+
+export async function login(code: string): Promise<void> {
+  await post("/api/login", { code });
 }
 
 /** Analiza los elementos indicados y guarda el análisis. Devuelve cuántos se analizaron. */
