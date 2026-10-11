@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import ItemCard from "./ItemCard";
 import SeedButton from "./SeedButton";
 import AccessForm from "./AccessForm";
+import MindMap from "./MindMap";
 import { AccessError, generateProfile } from "@/lib/analysis";
 import { useItems } from "@/lib/useItems";
 import { useProfile } from "@/lib/useProfile";
@@ -23,6 +24,7 @@ export default function ProfileView() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [needsCode, setNeedsCode] = useState(false);
+  const [view, setView] = useState<"mapa" | "grupos">("mapa");
 
   const clusters = useMemo(
     () => [...(profile?.clusters ?? [])].sort((a, b) => b.weight - a.weight),
@@ -62,21 +64,20 @@ export default function ProfileView() {
   }
 
   const selected = selectedId ? byId.get(selectedId) : undefined;
-  if (selected) {
-    return (
-      <ClusterDetail
-        cluster={selected}
-        total={items.length}
-        items={selected.itemIds.flatMap((id) => itemsById.get(id) ?? [])}
-        linked={selected.links.flatMap((l) => {
-          const to = byId.get(l.to);
-          return to ? [{ cluster: to, reason: l.reason }] : [];
-        })}
-        onBack={() => setSelectedId(null)}
-        onSelect={setSelectedId}
-      />
-    );
-  }
+  const detail = selected && (
+    <ClusterDetail
+      cluster={selected}
+      total={items.length}
+      items={selected.itemIds.flatMap((id) => itemsById.get(id) ?? [])}
+      linked={selected.links.flatMap((l) => {
+        const to = byId.get(l.to);
+        return to ? [{ cluster: to, reason: l.reason }] : [];
+      })}
+      onBack={view === "grupos" ? () => setSelectedId(null) : undefined}
+      onSelect={setSelectedId}
+    />
+  );
+  if (detail && view === "grupos") return detail;
 
   const newer = profile ? items.filter((i) => i.savedAt > profile.generatedAt).length : 0;
 
@@ -103,6 +104,21 @@ export default function ProfileView() {
           <p>Se analizan tus {items.length} elementos y se agrupan en torno a los intereses que más se repiten.</p>
         </div>
       ) : (
+        <>
+          <div className="view-toggle" role="group" aria-label="Vista del perfil">
+            {(["mapa", "grupos"] as const).map((v) => (
+              <button key={v} className="chip" aria-pressed={view === v} onClick={() => setView(v)}>
+                {v === "mapa" ? "Mapa" : "Grupos"}
+              </button>
+            ))}
+          </div>
+
+          {view === "mapa" ? (
+            <>
+              <MindMap clusters={clusters} total={items.length} selectedId={selectedId} onSelect={setSelectedId} />
+              {detail ?? <p className="meta map-hint">Toca un grupo para ver cómo aprovecharlo y qué lo conecta con los demás.</p>}
+            </>
+          ) : (
         <div className="cloud" role="list">
           {clusters.map((c) => (
             <button
@@ -117,6 +133,8 @@ export default function ProfileView() {
             </button>
           ))}
         </div>
+          )}
+        </>
       )}
     </>
   );
@@ -129,17 +147,28 @@ function ClusterDetail({
   total: number;
   items: Item[];
   linked: { cluster: Cluster; reason: string }[];
-  onBack: () => void;
+  onBack?: () => void;
   onSelect: (id: string) => void;
 }) {
   return (
-    <article>
-      <button className="link back" onClick={onBack}>Todos los grupos</button>
-      <h2 className="page-title" style={{ marginTop: 16 }}>{cluster.name}</h2>
+    <article className={onBack ? undefined : "map-panel"}>
+      {onBack && <button className="link back" onClick={onBack}>Todos los grupos</button>}
+      <h2 className="page-title" style={{ marginTop: onBack ? 16 : 0, fontSize: onBack ? undefined : 24 }}>{cluster.name}</h2>
       <p className="meta" style={{ marginTop: 8 }}>
         {plural(items.length, "elemento", "elementos")} de {total} · peso {Math.round(cluster.weight * 100)} %
       </p>
       <p className="detail-summary">{cluster.summary}</p>
+
+      <section className="section" style={{ marginTop: 32 }}>
+        <h3 className="section-title">Cómo aprovecharlo</h3>
+        {cluster.uses && cluster.uses.length > 0 ? (
+          <ul className="uses">
+            {cluster.uses.map((u) => <li key={u}>{u}</li>)}
+          </ul>
+        ) : (
+          <p className="meta" style={{ marginTop: 8 }}>Actualiza el perfil para ver ideas de uso de este grupo.</p>
+        )}
+      </section>
 
       {linked.length > 0 && (
         <section className="section">

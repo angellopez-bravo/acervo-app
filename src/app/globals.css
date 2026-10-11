@@ -189,3 +189,22 @@ a.card:hover, button.card:hover { border-color: var(--line-strong); }
 
 /* Títulos largos (por ejemplo, el texto de un tuit) */
 .item-title { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* Mapa mental */
+.view-toggle { display: flex; gap: 8px; margin-top: 28px; }
+.mindmap { display: block; width: 100%; max-width: 520px; height: auto; margin: 12px auto 0; }
+.mm-line { stroke: var(--line-strong); stroke-width: 1; }
+.mm-link { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 4; transition: opacity 0.2s ease; }
+.mm-link.active { stroke: var(--accent); stroke-dasharray: none; stroke-width: 1.5; }
+.mm-center { fill: var(--bg); stroke: var(--line-strong); stroke-width: 1; }
+.mm-total { fill: var(--muted); font-family: var(--font-sans); font-size: 14px; }
+.mm-node { cursor: pointer; outline: none; transition: opacity 0.2s ease; }
+.mm-pill { fill: var(--bg); stroke: var(--line-strong); stroke-width: 1; transition: stroke 0.2s ease; }
+.mm-node:hover .mm-pill { stroke: var(--muted); }
+.mm-node:focus-visible .mm-pill { stroke: var(--accent); }
+.mm-pill.selected { stroke: var(--accent); stroke-width: 1.5; }
+.mm-label { fill: var(--text); font-family: var(--font-serif); pointer-events: none; }
+.map-hint { text-align: center; margin-top: 16px; }
+.map-panel { margin-top: 28px; padding-top: 28px; border-top: 1px solid var(--line); }
+.uses { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
+.uses li { padding-left: 14px; border-left: 1px solid var(--accent); }
