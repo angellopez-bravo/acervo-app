@@ -149,3 +149,22 @@ a.card:hover, button.card:hover { border-color: var(--line-strong); }
 .grid .item-title { font-size: 17px; }
 .grid .item-body { font-size: 15px; -webkit-line-clamp: 2; }
 .grid .item-thumb { aspect-ratio: 4 / 3; }
+
+/* Perfil */
+.profile-bar { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+.error { color: var(--accent); font-family: var(--font-sans); font-size: 13px; }
+
+.cloud { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; align-items: stretch; }
+.bubble {
+  display: inline-flex; flex-direction: column; justify-content: center; gap: 2px;
+  min-height: 56px; padding: 12px 18px; text-align: left; line-height: 1.15;
+  border: 1px solid var(--line-strong); border-radius: var(--radius);
+  transition: border-color 0.2s ease;
+}
+.bubble:hover { border-color: var(--accent); }
+.bubble-name { font-family: var(--font-serif); }
+
+.back { font-family: var(--font-sans); font-size: 13px; text-decoration: none; }
+.back::before { content: "\2190\00a0"; }
+.detail-summary { margin-top: 20px; font-size: 20px; line-height: 1.5; }
+.link-card { width: 100%; text-align: left; display: flex; flex-direction: column; gap: 4px; }
