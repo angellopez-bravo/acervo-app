@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { analyzeItems } from "@/lib/analysis";
 import { findItemByUrl, putItem } from "@/lib/db";
 import { detectSource, extractUrl, youtubeThumbnail } from "@/lib/source";
 import { refreshItems } from "@/lib/useItems";
@@ -53,6 +54,8 @@ export default function ShareSaver() {
       };
       await putItem(item);
       await refreshItems();
+      // El análisis es secundario: si falla o no hay conexión, queda pendiente para después.
+      analyzeItems([item]).catch(() => {});
       return "guardado";
     })().then(setStatus, () => setStatus("error"));
   }, [empty, link, title, body]);
