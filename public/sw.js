@@ -4,7 +4,11 @@ const SHELL = ["/", "/biblioteca", "/perfil", "/ideas", "/compartir"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()),
+    // Cada página se precachea por separado: si una falla, la instalación del worker no se aborta.
+    caches
+      .open(CACHE)
+      .then((c) => Promise.allSettled(SHELL.map((url) => c.add(url))))
+      .then(() => self.skipWaiting()),
   );
 });
 

@@ -191,6 +191,9 @@ function sanitize(raw: Raw, items: Input[]) {
   return { clusters, highlights: raw.highlights.slice(0, 3), ideas };
 }
 
+// Las llamadas al modelo pueden tardar decenas de segundos; sin esto el hosting podría cortarlas.
+export const maxDuration = 60;
+
 export async function POST(request: Request) {
   try {
     requireAccess(request);
