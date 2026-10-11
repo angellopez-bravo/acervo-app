@@ -29,6 +29,8 @@ export type Cluster = {
   weight: number;
   itemIds: string[];
   links: ClusterLink[];
+  /** Formas concretas de aprovechar el grupo en el futuro. Los perfiles antiguos no lo tienen. */
+  uses?: string[];
 };
 
 export type Profile = {
