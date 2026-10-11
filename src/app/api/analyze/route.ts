@@ -1,3 +1,4 @@
+import { requireAccess } from "@/lib/server/access";
 import { ApiError, MODEL_ITEM, callJson, clip, errorResponse } from "@/lib/server/claude";
 import { SOURCE_LABEL, detectSource, displayHost } from "@/lib/source";
 import type { Analysis } from "@/lib/types";
@@ -61,6 +62,7 @@ async function analyzeOne(item: Input): Promise<Analysis> {
 
 export async function POST(request: Request) {
   try {
+    requireAccess(request);
     const body = await request.json().catch(() => null);
     if (!body || !Array.isArray(body.items) || body.items.length === 0) {
       throw new ApiError("Falta la lista de elementos a analizar.", 400);

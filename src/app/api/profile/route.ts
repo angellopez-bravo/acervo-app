@@ -1,3 +1,4 @@
+import { requireAccess } from "@/lib/server/access";
 import { ApiError, MODEL_PROFILE, callJson, clip, errorResponse } from "@/lib/server/claude";
 import { SOURCE_LABEL, detectSource } from "@/lib/source";
 
@@ -192,6 +193,7 @@ function sanitize(raw: Raw, items: Input[]) {
 
 export async function POST(request: Request) {
   try {
+    requireAccess(request);
     const body = await request.json().catch(() => null);
     const items = parseItems(body?.items).slice(0, MAX_ITEMS);
     if (items.length < MIN_ITEMS) {
