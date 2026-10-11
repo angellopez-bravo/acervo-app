@@ -32,5 +32,6 @@ export function buildSampleItems(now = Date.now()): Item[] {
     savedAt: now - daysAgo * DAY - i * 60_000,
     thumbnail: yt ? `https://i.ytimg.com/vi/${yt}/hqdefault.jpg` : undefined,
     analysis: { topics, style, appeal },
+    previewAt: now, // son datos de ejemplo: no se consultan las plataformas
   }));
 }

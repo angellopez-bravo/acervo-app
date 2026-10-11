@@ -186,3 +186,6 @@ a.card:hover, button.card:hover { border-color: var(--line-strong); }
 /* Acceso */
 .access { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; width: 100%; padding: 16px; border: 1px solid var(--line-strong); border-radius: var(--radius); }
 .access p:first-child { color: var(--muted); font-size: 16px; }
+
+/* Títulos largos (por ejemplo, el texto de un tuit) */
+.item-title { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }

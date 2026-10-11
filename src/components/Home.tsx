@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
 import ItemCard from "./ItemCard";
 import SeedButton from "./SeedButton";
+import { catchUpPreviews } from "@/lib/analysis";
 import { useItems } from "@/lib/useItems";
 import { useProfile } from "@/lib/useProfile";
 
@@ -15,6 +17,12 @@ const formatDate = (ts: number) =>
 export default function Home() {
   const items = useItems();
   const profile = useProfile();
+  const loaded = items !== null;
+
+  // Completa título, autor y miniatura de lo guardado antes de tener vista previa.
+  useEffect(() => {
+    if (loaded) catchUpPreviews().catch(() => {});
+  }, [loaded]);
 
   if (items === null || profile === undefined) return null;
 

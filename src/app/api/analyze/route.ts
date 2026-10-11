@@ -29,7 +29,7 @@ const SCHEMA = {
   additionalProperties: false,
 };
 
-type Input = { id: string; url: string; title: string; text: string; source: string };
+type Input = { id: string; url: string; title: string; text: string; source: string; author: string };
 
 function describe(i: Input): string {
   const source = SOURCE_LABEL[detectSource(i.url)];
@@ -38,6 +38,7 @@ function describe(i: Input): string {
     `Aplicación: ${source}`,
     `Dominio: ${displayHost(i.url) || "desconocido"}`,
     `Enlace: ${i.url || "(sin enlace)"}`,
+    i.author ? `Autor: ${i.author}` : "",
     `Título: ${i.title || "(sin título)"}`,
     `Texto: ${i.text || "(sin texto)"}`,
     "</elemento>",
@@ -81,6 +82,7 @@ export async function POST(request: Request) {
         title: clip(i.title, 500),
         text: clip(i.text, 3000),
         source: clip(i.source, 20),
+        author: clip(i.author, 100),
       }))
       .filter((i: Input) => i.id);
 

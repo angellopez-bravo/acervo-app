@@ -23,7 +23,7 @@ export default function ItemCard({ item }: { item: Item }) {
         <img className="item-thumb" src={item.thumbnail} alt="" loading="lazy" onError={() => setThumbFailed(true)} />
       )}
       <p className="meta">
-        {SOURCE_LABEL[item.source]} · {formatDate(item.savedAt)}
+        {[SOURCE_LABEL[item.source], item.author, formatDate(item.savedAt)].filter(Boolean).join(" · ")}
       </p>
       <h3 className="item-title">{title}</h3>
       {body && <p className="item-body">{body}</p>}
